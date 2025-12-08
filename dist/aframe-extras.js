@@ -14130,7 +14130,7 @@ AFRAME.registerComponent("nipple-controls", {
       "style",
       `position:absolute;${this.data.moveJoystickPosition}:${this.data.sideMargin};bottom:${this.data.bottomMargin};z-index:1`
     );
-    document.body.appendChild(leftZone);
+    this.el.sceneEl.appendChild(leftZone);
     this.leftZone = leftZone;
   },
 
@@ -14141,7 +14141,7 @@ AFRAME.registerComponent("nipple-controls", {
       "style",
       `position:absolute;${this.data.lookJoystickPosition}:${this.data.sideMargin};bottom:${this.data.bottomMargin};z-index:1`
     );
-    document.body.appendChild(rightZone);
+    this.el.sceneEl.appendChild(rightZone);
     this.rightZone = rightZone;
   },
 
