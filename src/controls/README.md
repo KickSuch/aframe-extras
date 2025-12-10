@@ -9,6 +9,8 @@ Extensible movement/rotation/hotkey controls, with support for a variety of inpu
   + **trackpad-controls**: Trackpad-based movement.
 - **checkpoint-controls**: Move to checkpoints created with the `checkpoint` component. *Not included by default with `movement-controls`, but may be added as shown in examples.*
 - **nipple-controls**: Virtual joysticks for rotation and movement on touch devices. This is using the [nipplejs](https://github.com/yoannmoinet/nipplejs) library.
+- **room-scale-movement-stabilizer**: For room-scale VR, stops camera movement when walking around your play space.
+- **room-scale-movement-adjuster**: For room-scale VR, simulates the movement from camera to the rig when walking around your play space.
 
 For the Cardboard button, this was tested and working on both Chrome Android and Safari iPhone with aframe 1.4.2.
 On iPhone you need `≤a-scene vr-mode-ui="cardboardModeEnabled:true">` for the VR button to show up.
@@ -72,6 +74,23 @@ With navigation mesh:
   <a-entity camera
             position="0 1.6 0"
             look-controls="pointerLockEnabled: true">
+  </a-entity>
+</a-entity>
+```
+
+When using movement-controls with navmesh in room-scale VR setup you may notice that there is a synchronization issue between the rig and the camera. The room-scale movement (walking around your play space) will change the camera's position which causes the camera to not be above the rig. This can allow users to move outside your defined navmesh or potentionally cause confusion. You can avoid this issue by using room-scale movement components.
+
+With navigation mesh and room-scale movement synchronization:
+
+```html
+<a-entity id="rig" 
+          movement-controls="constrainToNavMesh: true"
+          room-scale-movement-adjuster="constrainToNavMesh: true">
+  <a-entity room-scale-movement-stabilizer>
+    <a-entity camera
+              position="0 1.6 0"
+              look-controls="pointerLockEnabled: true">
+    </a-entity>
   </a-entity>
 </a-entity>
 ```

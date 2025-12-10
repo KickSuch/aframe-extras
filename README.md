@@ -15,6 +15,8 @@ src
 │   ├── checkpoint-controls.js
 │   ├── gamepad-controls.js
 │   ├── keyboard-controls.js
+│   ├── room-scale-movement-adjuster.js
+│   ├── room-scale-movement-stabilizer.js
 │   ├── touch-controls.js
 │   └── trackpad-controls.js
 ├── <b>loaders/</b> (<a href="/src/loaders">Documentation</a>)
