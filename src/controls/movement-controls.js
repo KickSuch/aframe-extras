@@ -108,7 +108,7 @@ AFRAME.registerComponent('movement-controls', {
       const velocityCtrl = this.velocityCtrl;
       const velocity = this.velocity;
 
-      if (!velocityCtrl) return;
+      if (!velocityCtrl && !data.constrainToNavMesh) return;
 
       // Update velocity. If FPS is too low, reset.
       if (dt / 1000 > MAX_DELTA) {
@@ -118,21 +118,34 @@ AFRAME.registerComponent('movement-controls', {
       }
 
       if (data.constrainToNavMesh
-          && velocityCtrl.isNavMeshConstrained !== false) {
+          && (!velocityCtrl || velocityCtrl.isNavMeshConstrained !== false)) {
 
         if (velocity.lengthSq() < EPS) return;
 
-        start.copy(el.object3D.position);
-        end
-          .copy(velocity)
-          .multiplyScalar(dt / 1000)
-          .add(start);
+        const cameraEl = data.camera;
+        const cameraOffset = new THREE.Vector3();
+        cameraEl.object3D.getWorldPosition(cameraOffset);
+        if (el.object3D.parent) {
+          el.object3D.parent.worldToLocal(cameraOffset);
+        }
+        cameraOffset.sub(el.object3D.position);
+        cameraOffset.y = 0;
+
+        start.copy(el.object3D.position).add(cameraOffset);
+        if (velocityCtrl) {
+          end
+            .copy(velocity)
+            .multiplyScalar(dt / 1000)
+            .add(start);
+        } else {
+          end.copy(start)
+        }
 
         const nav = el.sceneEl.systems.nav;
         this.navGroup = this.navGroup === null ? nav.getGroup(start) : this.navGroup;
         this.navNode = this.navNode || nav.getNode(start, this.navGroup);
         this.navNode = nav.clampStep(start, end, this.navGroup, this.navNode, clampedEnd);
-        el.object3D.position.copy(clampedEnd);
+        el.object3D.position.copy(clampedEnd.sub(cameraOffset));
       } else if (el.hasAttribute('velocity')) {
         el.setAttribute('velocity', velocity);
       } else {
